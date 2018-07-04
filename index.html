@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="author" content="Matiboux" />
 
+
+<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
 <link rel="stylesheet" type="text/css" href="style.css" />
 <title>Oli Admin</title>
 
@@ -12,22 +14,30 @@
 <body>
 
 <header id="header">
-	<img id="avatar" src="default.png" />
-	<h1>Matiboux</h1>
+	<div class="title">
+		<img id="avatar" src="default.png" />
+		<h1>Matiboux</h1>
+	</div>
 	<p>Hello World. :3</p>
 </header>
 
-<section id="main">
-</section>
+<div id="main">
+	<section id="matiboux">
+		<h2>Projects on <a href="https://github.com/matiboux/">@matiboux</a></h2>
+	</section>
+	<section id="OliFramework">
+		<h2>Projects on <a href="https://github.com/OliFramework/">@OliFramework</a></h2>
+	</section>
+</div>
 
 <footer id="footer">
-	<div class="float-left">
+	<section>
 		<ul>
-			<li><a href="https://github.com/matiboux/">@Matiboux</a> on Github</a>!</li>
-			<li>Check out <a href="https://matiboux.com/">my website</a>.</li>
+			<li><i class="fab fa-github fa-fw"></i> <a href="https://github.com/matiboux/">@matiboux</a> on Github</a>!</li>
+			<li><i class="fas fa-globe fa-fw"></i> Check out <a href="https://matiboux.com/">my website</a>.</li>
 		</ul>
-	</div>
-	<div class="float-right">Build with love. ❤️</div>
+	</section>
+	<section class="text-red"><i class="fas fa-heart"></i></section>
 </footer>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -38,7 +48,43 @@ $.get('https://api.github.com/users/matiboux').done(function(response) {
 	$('#avatar').attr('src', response.avatar_url);
 });
 
+$('#main > *').each(function() {
+	var id = $(this).attr('id');
+	$.get('https://api.github.com/users/' + id + '/repos').done(function(response) {
+		var $element = $('<div>').addClass('projects');
+		$.each(response, function(i, data) {
+			console.log(data);
+			$element.append(
+				$('<article>').addClass('item').append(
+					$('<h3>').append($('<a>').attr('href', data.html_url).html(data.name)),
+					$('<p>').html(data.description),
+					/*$('<ul>').append(
+						$('<li>').html('Last udpated: ' + data.updated_at)
+					),*/
+					$('<ul>').addClass('infos').append(
+						data.archived ? $('<li>').addClass('active').append($('<i>').addClass('fas fa-archive fa-fw')) : [],
+						data.fork ? $('<li>').addClass('active').append($('<i>').addClass('fas fa-code-branch fa-fw')) : [],
+						$('<li>').addClass(data.language ? 'active' : '').append($('<i>').addClass('fas fa-code fa-fw'), ' ', data.language ? data.language : ''),
+						$('<li>').addClass(data.license ? 'active' : '').append($('<i>').addClass('fas fa-balance-scale fa-fw'), ' ', data.license ? data.license.spdx_id : 'None'),
+						data.homepage ? $('<li>').addClass('active').append($('<a>').attr('href', data.homepage).append($('<i>').addClass('fas fa-globe fa-fw'), ' Website')) : [],
+						
+					),
+					$('<ul>').addClass('stats').append(
+						$('<li>').addClass(data.stargazers_count > 0 ? 'active' : '').append($('<i>').addClass('fas fa-star fa-fw'), ' ', data.stargazers_count),
+						$('<li>').addClass(data.watchers_count > 0 ? 'active' : '').append($('<i>').addClass('fas fa-eye fa-fw'), ' ', data.watchers_count),
+						$('<li>').addClass(data.forks_count > 0 ? 'active' : '').append($('<i>').addClass('fas fa-code-branch fa-fw'), ' ', data.forks_count)
+					)
+				)
+			)
+		});
+		$('#' + id).append($element);
+	}).fail(function() {
+		$('#' + id).append($('<p>').addClass('error').html('An error occurred.'));
+	});
+});
+
 })();
+
 </script>
 
 </body>
