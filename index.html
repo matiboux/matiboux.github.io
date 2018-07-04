@@ -16,12 +16,16 @@
 <header id="header">
 	<div class="title">
 		<img id="avatar" src="default.png" />
-		<h1>Matiboux</h1>
+		<h1><a href="https://github.com/matiboux/">Matiboux</a></h1>
 	</div>
 	<p>Hello World. :3</p>
 </header>
 
 <div id="main">
+	<ul class="settings">
+		<li id="toggleArchives"><i class="fas fa-archive fa-fw"></i> Toggle Archives</li>
+		<li id="toggleForks"><i class="fas fa-code-branch fa-fw"></i> Toggle Forks</li>
+	</ul>
 	<section id="matiboux">
 		<h2>Projects on <a href="https://github.com/matiboux/">@matiboux</a></h2>
 	</section>
@@ -33,16 +37,27 @@
 <footer id="footer">
 	<section>
 		<ul>
-			<li><i class="fab fa-github fa-fw"></i> <a href="https://github.com/matiboux/">@matiboux</a> on Github</a>!</li>
-			<li><i class="fas fa-globe fa-fw"></i> Check out <a href="https://matiboux.com/">my website</a>.</li>
+			<li><i class="fab fa-github fa-fw"></i> <a href="https://github.com/matiboux/matiboux.github.io">Open-Source Repository</a></li>
+			<li><i class="fas fa-globe fa-fw"></i> Check out <a href="https://matiboux.com/">my website</a></li>
 		</ul>
 	</section>
-	<section class="text-red"><i class="fas fa-heart"></i></section>
+	<section>Built with love. <i class="fas fa-heart fa-fw" style="color: #c04040"></i></section>
 </footer>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script>
 (function() {
+
+$('#toggleArchives').click(function() {
+	if($(this).hasClass('toggled')) $('#main .projects .item.archive').fadeOut();
+	else $('#main .projects .item.archive').fadeIn();
+	$(this).toggleClass('toggled');
+});
+$('#toggleForks').click(function() {
+	if($(this).hasClass('toggled')) $('#main .projects .item.fork').fadeOut();
+	else $('#main .projects .item.fork').fadeIn();
+	$(this).toggleClass('toggled');
+});
 
 $.get('https://api.github.com/users/matiboux').done(function(response) {
 	$('#avatar').attr('src', response.avatar_url);
@@ -50,12 +65,12 @@ $.get('https://api.github.com/users/matiboux').done(function(response) {
 
 $('#main > *').each(function() {
 	var id = $(this).attr('id');
+	console.log(id);
 	$.get('https://api.github.com/users/' + id + '/repos').done(function(response) {
 		var $element = $('<div>').addClass('projects');
 		$.each(response, function(i, data) {
-			console.log(data);
 			$element.append(
-				$('<article>').addClass('item').append(
+				$('<article>').addClass('item').addClass(data.archived ? 'archive' : '').addClass(data.fork ? 'fork' : '').css('display', (data.archived || data.fork) ? 'none' : 'block').append(
 					$('<h3>').append($('<a>').attr('href', data.html_url).html(data.name)),
 					$('<p>').html(data.description),
 					/*$('<ul>').append(
