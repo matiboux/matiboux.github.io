@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="author" content="Matiboux" />
 
-
-<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous" />
 <link rel="stylesheet" type="text/css" href="style.css" />
 <title>Matiboux › Open-Source</title>
 
@@ -66,7 +65,7 @@ $.get('https://api.github.com/users/matiboux').done(function(response) {
 	$('#avatar').attr('src', response.avatar_url);
 });
 
-$('#main > *').each(function() {
+$('#main > section').each(function() {
 	var id = $(this).attr('id');
 	console.log(id);
 	$.get('https://api.github.com/users/' + id + '/repos').done(function(response) {
