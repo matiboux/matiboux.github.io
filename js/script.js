@@ -1,5 +1,7 @@
 (function() {
 
+let languagesAvailable = [];
+
 /**
  * How to get response headers on all jquery ajax requests
  * https://foxontherock.com/how-to-get-response-headers-on-all-jquery-ajax-requests/
@@ -31,16 +33,41 @@ function getResponseHeaders(jqXHR) {
  * Copyright (c) Matiboux https://github.com/matiboux
  */
 
+const updateItems = () => {
+	
+	let $selector = $('#main .projects .item');
+	$selector.hide();
+	
+	if (!$('#toggleArchives').hasClass('toggled')) {
+		// Archives are toggled off, hide them
+		$selector = $selector.not('.archive');
+	}
+	
+	if (!$('#toggleForks').hasClass('toggled')) {
+		// Forks are toggled off, hide them
+		$selector = $selector.not('.fork');
+	}
+		// $('#main .projects .item.fork').fadeIn();
+	
+	if ($('#selectLanguages').val() != 'All languages') {
+		// Restrict the selector to the selected language
+		$selector = $selector.filter('.lang-' + $('#selectLanguages').val());
+	}
+	
+	$selector.fadeIn();
+};
+
 // Toggle buttons
 $('#toggleArchives').click(function() {
-	if($(this).hasClass('toggled')) $('#main .projects .item.archive').fadeOut();
-	else $('#main .projects .item.archive').fadeIn();
 	$(this).toggleClass('toggled');
+	updateItems();
 });
 $('#toggleForks').click(function() {
-	if($(this).hasClass('toggled')) $('#main .projects .item.fork').fadeOut();
-	else $('#main .projects .item.fork').fadeIn();
 	$(this).toggleClass('toggled');
+	updateItems();
+});
+$('#selectLanguages').change(function() {
+	updateItems();
 });
 
 // Load avatar from Github
@@ -50,6 +77,7 @@ $.get('https://api.github.com/users/matiboux').done(function(response) {
 
 // Load repos from featured users or organizations
 function loadUserRepos(url, $element) {
+
 	$.get(url).done(function(response, textStatus, jqXHR) {
 		if(jqXHR.responseHeaders.link) {
 			headerlinks = parseLinkHeader(jqXHR.responseHeaders.link);
@@ -57,9 +85,10 @@ function loadUserRepos(url, $element) {
 		}
 		
 		$.each(response, function(i, data) {
-			console.log(data.topics)
+			data.language = data.language ? data.language.replace('#', 'Sharp') : 'None';
+
 			$element.append(
-				$('<article>').addClass('item').addClass(data.archived ? 'archive' : '').addClass(data.fork ? 'fork' : '').css('display', (data.archived || data.fork) ? 'none' : 'block').append(
+				$('<article>').addClass('item').addClass('lang-' + data.language).addClass(data.archived ? 'archive' : '').addClass(data.fork ? 'fork' : '').css('display', (data.archived || data.fork) ? 'none' : 'block').append(
 					$('<h3>').append($('<a>').attr('href', data.html_url).html(data.name)),
 					$('<p>').html(data.description),
 					/*$('<ul>').append(
@@ -79,10 +108,21 @@ function loadUserRepos(url, $element) {
 						$('<li>').addClass(data.forks_count > 0 ? 'active' : '').append($('<i>').addClass('fas fa-code-branch fa-fw'), ' ', data.forks_count)
 					)
 				)
-			)
+			);
+
+			if(languagesAvailable.indexOf(data.language) == -1)
+				languagesAvailable.push(data.language);
 		});
+		
 	}).fail(function() {
 		$element.append($('<p>').addClass('error').html('An error occurred.'));
+	});
+
+	languagesAvailable.forEach(element => {
+		let el = document.createElement("option");
+		el.textContent = element;
+		el.value = element;
+		$('#selectLanguages').append(el);
 	});
 };
 
