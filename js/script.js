@@ -34,16 +34,27 @@ function getResponseHeaders(jqXHR) {
  */
 
 const updateItems = () => {
-	$('#main .projects .item').hide();
-
-	let path = "#main .projects .item";
-	path += $('#toggleArchives').hasClass('toggled') ? '.archive' : '';
-	path += ($('#toggleForks').hasClass('toggled') ? '.fork' : '');
-
-	if($('#selectLanguages').val() != 'All languages')
-		path += ".lang-" + $('#selectLanguages').val();
-
-	$(path).fadeIn()
+	
+	let $selector = $('#main .projects .item');
+	$selector.hide();
+	
+	if (!$('#toggleArchives').hasClass('toggled')) {
+		// Archives are toggled off, hide them
+		$selector = $selector.not('.archive');
+	}
+	
+	if (!$('#toggleForks').hasClass('toggled')) {
+		// Forks are toggled off, hide them
+		$selector = $selector.not('.fork');
+	}
+		// $('#main .projects .item.fork').fadeIn();
+	
+	if ($('#selectLanguages').val() != 'All languages') {
+		// Restrict the selector to the selected language
+		$selector = $selector.filter('.lang-' + $('#selectLanguages').val());
+	}
+	
+	$selector.fadeIn();
 };
 
 // Toggle buttons
