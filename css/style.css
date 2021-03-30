@@ -31,8 +31,10 @@ a:hover, a:focus { color: #4080c0; text-decoration: underline }
 #main { background: #303030; padding: 30px; overflow: hidden }
 #main > * { margin: 20px 0 }
 #main > ul.settings { margin: 0; padding: 0; list-style: none }
-#main > ul.settings > li { background: #c04040; display: inline-block; padding: 10px; border-radius: 5px; cursor: pointer }
-#main > ul.settings > li:hover, #main > ul.settings > li:focus { background: #903030 }
+#main > ul.settings > li { display: inline-block }
+#main > ul.settings > li.btn { background: #c04040; padding: 10px; border-radius: 5px; cursor: pointer }
+#main > ul.settings > li.select select { padding: 10px; border-radius: 5px }
+#main > ul.settings > li.btn:hover, #main > ul.settings > li.btn:focus { background: #903030 }
 #main > ul.settings > li.toggled { background: #4080c0 }
 #main > ul.settings > li.toggled:hover, #main > ul.settings > li.toggled:focus { background: #306090 }
 #main > ul.settings > li:not(:first-child) { margin-left: 10px }
